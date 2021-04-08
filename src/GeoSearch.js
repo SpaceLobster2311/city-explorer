@@ -17,8 +17,8 @@ class GeoSearch extends React.Component {
   }
   render(){
     return( // last left off trying to get data to render in console.log
-      
-      <form onSubmit={(this.props.fetchData)}>
+
+      <form onSubmit={(this.handleFormSubmitted)}>
       <label>
         Type a City:
         <input type="text" ref={this.textInput}/>
