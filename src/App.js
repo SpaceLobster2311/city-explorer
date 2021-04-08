@@ -25,12 +25,12 @@ class App extends React.Component {
       citySearchedFor: citySearchedFor
     });
     // make request from locationIQ
+    let mapsData = await axios.get(`https://us1.locationiq.com/v1/search.php?key=${process.env.REACT_APP_CITY_KEY}&q=${citySearchedFor}}&format=json`);
+    console.log(mapsData)
   }
   fetchData = async () => {
     console.log('fetching')
     // this is where we grab data from api and store as variable
-    let mapsData = await axios.get(`https://us1.locationiq.com/v1/search.php?key=${process.env.REACT_APP_CITY_KEY}&q=${this.citySearchedFor}}&format=json`);
-    console.log(mapsData)
   } 
 
   render(){
