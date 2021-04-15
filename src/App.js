@@ -2,44 +2,46 @@
 import './App.css';
 import React from 'react';
 import axios from 'axios';
-import GeoSearch from './GeoSearch';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+import { Jumbotron } from 'react-bootstrap';
 
 
 class App extends React.Component {
-
-  // what to track state if we have searched or not
-  constructor(props){
+  constructor(props) {
     super(props);
 
-    this.state={
-      haveWeSearchedYet: false,
-      citySearchedFor: '',
-    };
+    this.state ={
+      citySearched: '',
+      cityData: {}
+    }
   }
-
-  //functions to call when user searched
-  handleSearch = async (citySearchedFor) => {
-    console.log('works');
+  handleformSubmit = async (event) => {
+    event.preventDefault();
+    console.log(this.state.citySearched)
+    let cityData = await axios.get(`https://us1.locationiq.com/v1/search.php?key=${process.env.REACT_APP_CITY_KEY}&q=${this.state.citySearched}&format=json`);
+    console.log(cityData);
+    let importantCity = cityData.data[0];
     this.setState({
-      haveWeSearchedYet: true,
-      citySearchedFor: citySearchedFor
+      cityData: importantCity,
     });
-    // make request from locationIQ
-    let mapsData = await axios.get(`https://us1.locationiq.com/v1/search.php?key=${process.env.REACT_APP_CITY_KEY}&q=${citySearchedFor}}&format=json`);
-    console.log(mapsData)
   }
-  fetchData = async () => {
-    console.log('fetching')
-    // this is where we grab data from api and store as variable
-  } 
-
   render(){
     return(
-      <div>
-      <h1>Welcome to CityExplorer</h1>
-      <h2 onClick={this.fetchData}>CityMaps!</h2>
-      <GeoSearch handleSearch={this.handleSearch}/>
-      </div>
+      <>
+        <h1>City Explorer</h1>
+        <Form onSubmit={this.handleformSubmit}>
+          <Form.Group controlId ="city">
+            <Form.Label>City Name</Form.Label>
+            <Form.Control value ={this.state.citySearched} onInput={e => this.setState({citySearched: e.target.value})}></Form.Control>
+          </Form.Group>
+          <Button variant ="primary" type ="submit">Explore</Button>
+        </Form>
+        {this.state.cityData.lat ? <Jumbotron>
+          <h3>{this.state.cityData.display_name}</h3>
+          <h5>{this.state.cityData.lat}, {this.state.cityData.lon}</h5>
+        </Jumbotron> : ''}
+      </>
     );
   }
 }
