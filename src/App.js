@@ -27,6 +27,8 @@ class App extends React.Component {
       let importantCity = cityData.data[0];
       this.setState({
         cityData: importantCity,
+        lat: cityData.data[0].lat,
+        lon: cityData.data[0].lon,
       });
 
       this.getWeatherData();
@@ -38,7 +40,11 @@ class App extends React.Component {
 
   getWeatherData = async () => {
     try {
-    const weatherData = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/weather`)
+    const weatherData = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/weather`,
+    {
+      params: {lat: this.state.lat,
+      lon: this.state.lon,}
+    })
 
     this.setState({weatherData: weatherData.data})
     console.log(this.state);
