@@ -6,6 +6,7 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { Jumbotron } from 'react-bootstrap';
 import Weather from './Weather.js';
+import Movies from './Movies.js';
 
 
 class App extends React.Component {
@@ -16,6 +17,7 @@ class App extends React.Component {
       citySearched: '',
       cityData: {},
       weatherData: [],
+      movie: [],
     }
   }
   handleformSubmit = async (event) => {
@@ -32,11 +34,29 @@ class App extends React.Component {
       });
 
       this.getWeatherData();
+      this.getMovieData();
     } catch(err) {
       console.log(err);
       this.setState({error: err.message})
     }
   }
+
+  getMovieData = async (citySearched) => {
+    try{
+    const movieData = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/movies`,
+    {
+      params: {movie: this.state.citySearched}
+    })
+    this.setState({movie: movieData.data})
+    console.log(movieData)
+  }catch(error){
+      this.setState({
+        errorResponse: error.errorResponse,
+        error: true,
+      })
+    }
+  }
+
 
   getWeatherData = async () => {
     try {
@@ -55,6 +75,9 @@ class App extends React.Component {
       })
     }
   }
+
+
+
   render(){
     return(
       <>
@@ -77,6 +100,7 @@ class App extends React.Component {
           <img src={`https://maps.locationiq.com/v3/staticmap?key=${process.env.REACT_APP_CITY_KEY}&center=${this.state.cityData.lat},${this.state.cityData.lon}&zoom=13`} alt={`Map of ${this.state.cityData.display_name}`} />
         </Jumbotron>
         <Weather weatherData={this.state.weatherData}/>
+        <Movies movieData={this.state.movie}/>
         </>
          ) : ''}
       </>
